@@ -106,7 +106,173 @@ x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
 
 Y_fit = siroutput_full(x,t);
 
-figure(1);
+figure();
+subplot(1, 2, 1);
+hold on;
+plot(Y_fit(:, 1));
+plot(covidstlcity_full(:, 1));
+hold off;
+legend('S','Measured Susceptible');
+xlabel('Time');
+ylabel('Population Fraction');
+title("Modeled Susceptible and Measured Susceptible as a Function of Time");
+
+subplot(1, 2, 2);
+hold on;
+plot(Y_fit(:, 4));
+plot(covidstlcity_full(:, 2));
+hold off;
+legend('D','Measured Fatality Rate');
+xlabel('Time');
+ylabel('Population Fraction');
+title("Modeled Fatality Rate and Measured Fatality Rate as a Function of Time");
 
 % Make some plots that illustrate your findings.
 % TO ADD
+
+120, 240, 330, 500
+
+covidstlcity_first = covidstlcity_full(1:120, :);
+coviddata = covidstlcity_first; % TO SPECIFY
+t = 120; % TO SPECIFY
+
+sirafun= @(x)siroutput(x,t,coviddata);
+
+x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
+Y_fit = siroutput_full(x,t);
+figure();
+subplot(1, 2, 1);
+hold on;
+plot(Y_fit(:, 1));
+plot(covidstlcity_first(:, 1));
+hold off;
+legend('S','Measured Susceptible');
+xlabel('Time');
+ylabel('Population Fraction');
+title("Modeled Susceptible and Measured Susceptible as a Function of Time");
+
+subplot(1, 2, 2);
+hold on;
+plot(Y_fit(:, 4));
+plot(covidstlcity_first(:, 2));
+hold off;
+legend('D','Measured Fatality Rate');
+xlabel('Time');
+ylabel('Population Fraction');
+title("Modeled Fatality Rate and Measured Fatality Rate as a Function of Time");
+
+covidstlcity_second = covidstlcity_full(121:240, :);
+coviddata = covidstlcity_second; % TO SPECIFY
+t = 120; % TO SPECIFY
+
+sirafun= @(x)siroutput(x,t,coviddata);
+x0 = x;
+x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
+Y_fit = siroutput_full(x,t);
+figure();
+subplot(1, 2, 1);
+hold on;
+plot(Y_fit(:, 1));
+plot(covidstlcity_second(:, 1));
+hold off;
+legend('S','Measured Susceptible');
+xlabel('Time');
+ylabel('Population Fraction');
+title("Modeled Susceptible and Measured Susceptible as a Function of Time");
+
+subplot(1, 2, 2);
+hold on;
+plot(Y_fit(:, 4));
+plot(covidstlcity_second(:, 2));
+hold off;
+legend('D','Measured Fatality Rate');
+xlabel('Time');
+ylabel('Population Fraction');
+title("Modeled Fatality Rate and Measured Fatality Rate as a Function of Time");
+
+covidstlcity_third = covidstlcity_full(241:340, :);
+coviddata = covidstlcity_third; % TO SPECIFY
+t = 100; % TO SPECIFY
+
+sirafun= @(x)siroutput(x,t,coviddata);
+x0 = x;
+x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
+Y_fit = siroutput_full(x,t);
+figure();
+subplot(1, 2, 1);
+hold on;
+plot(Y_fit(:, 1));
+plot(covidstlcity_third(:, 1));
+hold off;
+legend('S','Measured Susceptible');
+xlabel('Time');
+ylabel('Population Fraction');
+title("Modeled Susceptible and Measured Susceptible as a Function of Time");
+
+subplot(1, 2, 2);
+hold on;
+plot(Y_fit(:, 4));
+plot(covidstlcity_third(:, 2));
+hold off;
+legend('D','Measured Fatality Rate');
+xlabel('Time');
+ylabel('Population Fraction');
+title("Modeled Fatality Rate and Measured Fatality Rate as a Function of Time");
+
+covidstlcity_fourth = covidstlcity_full(341:500, :);
+coviddata = covidstlcity_fourth; % TO SPECIFY
+t = 160; % TO SPECIFY
+
+sirafun= @(x)siroutput(x,t,coviddata);
+x0 = x;
+x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
+Y_fit = siroutput_full(x,t);
+figure();
+subplot(1, 2, 1);
+hold on;
+plot(Y_fit(:, 1));
+plot(covidstlcity_fourth(:, 1));
+hold off;
+legend('S','Measured Susceptible');
+xlabel('Time');
+ylabel('Population Fraction');
+title("Modeled Susceptible and Measured Susceptible as a Function of Time");
+
+subplot(1, 2, 2);
+hold on;
+plot(Y_fit(:, 4));
+plot(covidstlcity_fourth(:, 2));
+hold off;
+legend('D','Measured Fatality Rate');
+xlabel('Time');
+ylabel('Population Fraction');
+title("Modeled Fatality Rate and Measured Fatality Rate as a Function of Time");
+
+covidstlcity_fifth = covidstlcity_full(501:594, :);
+coviddata = covidstlcity_fifth; % TO SPECIFY
+t = 94; % TO SPECIFY
+
+sirafun= @(x)siroutput(x,t,coviddata);
+x0 = x;
+x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
+Y_fit = siroutput_full(x,t);
+figure();
+subplot(1, 2, 1);
+hold on;
+plot(Y_fit(:, 1));
+plot(covidstlcity_fifth(:, 1));
+hold off;
+legend('S','Measured Susceptible');
+xlabel('Time');
+ylabel('Population Fraction');
+title("Modeled Susceptible and Measured Susceptible as a Function of Time");
+
+subplot(1, 2, 2);
+hold on;
+plot(Y_fit(:, 4));
+plot(covidstlcity_fifth(:, 2));
+hold off;
+legend('D','Measured Fatality Rate');
+xlabel('Time');
+ylabel('Population Fraction');
+title("Modeled Fatality Rate and Measured Fatality Rate as a Function of Time");
