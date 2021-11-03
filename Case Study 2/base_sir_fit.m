@@ -1,4 +1,6 @@
-
+clear
+close all
+load('COVIDdata.mat')
 % Here is an example that reads in infection and fatalities from STL City
 % and loads them into a new matrix covidstlcity_full
 % In addition to this, you have other matrices for the other two regions in question
@@ -73,8 +75,8 @@ sirafun= @(x)siroutput(x,t,coviddata);
 % Set A and b to impose a parameter inequality constraint of the form A*x < b
 % Note that this is imposed element-wise
 % If you don't want such a constraint, keep these matrices empty.
-A = [];
-b = [];
+A = [0 0 1 0 0 0 0];
+b = [.1]; % Recovery rate kept fluctuating to over .6 so we kept it <= .1
 
 %% set up some fixed constraints
 % Set Af and bf to impose a parameter constraint of the form Af*x = bf
@@ -93,7 +95,7 @@ ub = [1 1 1 1 1 1 1]';
 lb = [0 0 0 0 0 0 0]';
 
 % Specify some initial parameters for the optimizer to start from
-x0 = [.005; .01; .10; (STL_population - 1)/STL_population; 1/STL_population; 0; 0]; 
+x0 = [.005; .005; .075; (STL_population - 1)/STL_population; 1/STL_population; 0; 0]; 
 
 % This is the key line that tries to opimize your model parameters in order to
 % fit the data
@@ -190,9 +192,9 @@ xlabel('Time');
 ylabel('Population Fraction');
 title("Modeled Fatality Rate and Measured Fatality Rate as a Function of Time");
 
-covidstlcity_third = covidstlcity_full(241:340, :);
+covidstlcity_third = covidstlcity_full(241:330, :);
 coviddata = covidstlcity_third; % TO SPECIFY
-t = 100; % TO SPECIFY
+t = 90; % TO SPECIFY
 
 sirafun= @(x)siroutput(x,t,coviddata);
 x0 = x;
@@ -219,9 +221,9 @@ xlabel('Time');
 ylabel('Population Fraction');
 title("Modeled Fatality Rate and Measured Fatality Rate as a Function of Time");
 
-covidstlcity_fourth = covidstlcity_full(341:500, :);
+covidstlcity_fourth = covidstlcity_full(331:500, :);
 coviddata = covidstlcity_fourth; % TO SPECIFY
-t = 160; % TO SPECIFY
+t = 170; % TO SPECIFY
 
 sirafun= @(x)siroutput(x,t,coviddata);
 x0 = x;
