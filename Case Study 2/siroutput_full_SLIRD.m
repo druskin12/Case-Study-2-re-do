@@ -11,9 +11,9 @@ function f = siroutput_full_SLIRD(x,t)
 k_infections = x(1);
 k_fatality = x(2);
 k_recover = x(3);
-k_lockdown = x(4);
-k_vaccine = x(5);
-k_susc_lock = x(6);
+k_vaccine = x(4);
+k_susc_lock = x(5);
+k_lock_susc = x(6);
 
 % set up initial conditions
 ic_susc = x(7);
@@ -23,8 +23,8 @@ ic_rec = x(10);
 ic_fatality = x(11);
 
 % Set up SLIRD within-population transmission matrix
-A = [1 - k_susc_lock - k_infections - k_vaccine              1 - k_lockdown - k_infections/100 - k_vaccine  0                             0 0; 
-    k_susc_lock                                              k_lockdown                                     0                             0 0;
+A = [1 - k_susc_lock - k_infections - k_vaccine              k_lock_susc                                    0                             0 0; 
+    k_susc_lock                                              1 - k_lock_susc - k_infections/100 - k_vaccine 0                             0 0;
     k_infections                                             k_infections/100                               1 - k_recover - k_fatality    0 0; 
     k_vaccine                                                k_vaccine                                      k_recover                     1 0; 
     0                                                        0                                              k_fatality                    0 1];
@@ -33,7 +33,7 @@ A = [1 - k_susc_lock - k_infections - k_vaccine              1 - k_lockdown - k_
 B = zeros(5,1);
 
 % Set up the vector of initial conditions
-x0 = [ic_susc; ic_lockdown, ic_inf; ic_rec; ic_fatality];
+x0 = [ic_susc; ic_lockdown; ic_inf; ic_rec; ic_fatality];
 
 % Here is a compact way to simulate a linear dynamical system.
 % Type 'help ss' and 'help lsim' to learn about how these functions work!!

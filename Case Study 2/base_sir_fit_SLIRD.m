@@ -95,7 +95,7 @@ ub = [1 1 1 1 1 1 1 1 1 1 1]';
 lb = [0 0 0 0 0 0 0 0 0 0 0]';
 
 % Specify some initial parameters for the optimizer to start from
-x0 = [.005; .005; .075; 0.8; 0; 0; 1 - 0.75 - 1/STL_population; 0.75; 1/STL_population; 0; 0]; 
+x0 = [.005; .005; .075; 0; 0; 0.01; 1 - 0.75 - 1/STL_population; 0.75; 1/STL_population; 0; 0]; 
 
 % This is the key line that tries to opimize your model parameters in order to
 % fit the data
@@ -110,7 +110,7 @@ Y_fit = siroutput_full_SLIRD(x,t);
 Y_fit_sub_together = zeros(594, 5);
 
 figure(1);
-subplot(1, 2, 1);
+subplot(1, 3, 1);
 hold on;
 plot(Y_fit(:, 1));
 plot(covidstlcity_full(:, 1));
@@ -120,7 +120,7 @@ xlabel('Time');
 ylabel('Population Fraction');
 title("Modeled Susceptible and Measured Susceptible as a Function of Time");
 
-subplot(1, 2, 2);
+subplot(1, 3, 2);
 hold on;
 plot(Y_fit(:, 5));
 plot(covidstlcity_full(:, 2));
@@ -130,19 +130,23 @@ xlabel('Time');
 ylabel('Population Fraction');
 title("Modeled Fatality Rate and Measured Fatality Rate as a Function of Time");
 
+subplot(1, 3, 3);
+plot(Y_fit(:, 2));
+xlabel('Time');
+ylabel('Population Fraction');
+title("Modeled Lockdown Rate as a Function of Time");
+%%
 % Make some plots that illustrate your findings.
 % TO ADD
-
-120, 240, 330, 500
 
 covidstlcity_first = covidstlcity_full(1:120, :);
 coviddata = covidstlcity_first; % TO SPECIFY
 t = 120; % TO SPECIFY
 
-sirafun= @(x)siroutput(x,t,coviddata);
+sirafun= @(x)siroutput_SLIRD(x,t,coviddata);
 
 x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
-Y_fit = siroutput_full(x,t);
+Y_fit = siroutput_full_SLIRD(x,t);
 
 Y_fit_sub_together([1:120], :) = Y_fit(:, :);
 
@@ -171,10 +175,10 @@ covidstlcity_second = covidstlcity_full(121:240, :);
 coviddata = covidstlcity_second; % TO SPECIFY
 t = 120; % TO SPECIFY
 
-sirafun= @(x)siroutput(x,t,coviddata);
+sirafun= @(x)siroutput_SLIRD(x,t,coviddata);
 x0 = x;
 x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
-Y_fit = siroutput_full(x,t);
+Y_fit = siroutput_full_SLIRD(x,t);
 Y_fit_sub_together([121:240], :) = Y_fit(:, :);
 figure(3);
 subplot(1, 2, 1);
@@ -201,10 +205,10 @@ covidstlcity_third = covidstlcity_full(241:330, :);
 coviddata = covidstlcity_third; % TO SPECIFY
 t = 90; % TO SPECIFY
 
-sirafun= @(x)siroutput(x,t,coviddata);
+sirafun= @(x)siroutput_SLIRD(x,t,coviddata);
 x0 = x;
 x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
-Y_fit = siroutput_full(x,t);
+Y_fit = siroutput_full_SLIRD(x,t);
 Y_fit_sub_together([241:330], :) = Y_fit(:, :);
 figure(4);
 subplot(1, 2, 1);
@@ -231,10 +235,10 @@ covidstlcity_fourth = covidstlcity_full(331:500, :);
 coviddata = covidstlcity_fourth; % TO SPECIFY
 t = 170; % TO SPECIFY
 
-sirafun= @(x)siroutput(x,t,coviddata);
+sirafun= @(x)siroutput_SLIRD(x,t,coviddata);
 x0 = x;
 x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
-Y_fit = siroutput_full(x,t);
+Y_fit = siroutput_full_SLIRD(x,t);
 Y_fit_sub_together([331:500], :) = Y_fit(:, :);
 figure(5);
 subplot(1, 2, 1);
@@ -261,10 +265,10 @@ covidstlcity_fifth = covidstlcity_full(501:594, :);
 coviddata = covidstlcity_fifth; % TO SPECIFY
 t = 94; % TO SPECIFY
 
-sirafun= @(x)siroutput(x,t,coviddata);
+sirafun= @(x)siroutput_SLIRD(x,t,coviddata);
 x0 = x;
 x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
-Y_fit = siroutput_full(x,t);
+Y_fit = siroutput_full_SLIRD(x,t);
 Y_fit_sub_together([501:594], :) = Y_fit(:, :);
 figure(6);
 subplot(1, 2, 1);
