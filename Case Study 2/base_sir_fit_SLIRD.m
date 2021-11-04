@@ -69,13 +69,13 @@ t = 594; % TO SPECIFY
 % and see the sectiono on 'passing extra arguments'
 % Basically, 'sirafun' is being set as the function siroutput (which you
 % will be designing) but with t and coviddata specified.
-sirafun= @(x)siroutput(x,t,coviddata);
+sirafun= @(x)siroutput_SLIRD(x,t,coviddata);
 
 %% set up rate and initial condition constraints
 % Set A and b to impose a parameter inequality constraint of the form A*x < b
 % Note that this is imposed element-wise
 % If you don't want such a constraint, keep these matrices empty.
-A = [0 0 1 0 0 0 0];
+A = [0 0 1 0 0 0 0 0 0 0 0];
 b = [.1]; % Recovery rate kept fluctuating to over .6 so we kept it <= .1
 
 %% set up some fixed constraints
@@ -83,7 +83,7 @@ b = [.1]; % Recovery rate kept fluctuating to over .6 so we kept it <= .1
 % Hint: For example, the sum of the initial conditions should be
 % constrained
 % If you don't want such a constraint, keep these matrices empty.
-Af = [0 0 0 1 1 1 1];
+Af = [0 0 0 0 0 0 1 1 1 1 1];
 bf = 1;
 
 %% set up upper and lower bound constraints
@@ -91,11 +91,11 @@ bf = 1;
 % lb < x < ub
 % here, the inequality is imposed element-wise
 % If you don't want such a constraint, keep these matrices empty.
-ub = [1 1 1 1 1 1 1]';
-lb = [0 0 0 0 0 0 0]';
+ub = [1 1 1 1 1 1 1 1 1 1 1]';
+lb = [0 0 0 0 0 0 0 0 0 0 0]';
 
 % Specify some initial parameters for the optimizer to start from
-x0 = [.005; .005; .075; (STL_population - 1)/STL_population; 1/STL_population; 0; 0]; 
+x0 = [.005; .005; .075; 0.8; 0; 0; 1 - 0.75 - 1/STL_population; 0.75; 1/STL_population; 0; 0]; 
 
 % This is the key line that tries to opimize your model parameters in order to
 % fit the data
@@ -106,8 +106,8 @@ x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
 %legend('S',L','I','R','D');
 %xlabel('Time')
 
-Y_fit = siroutput_full(x,t);
-Y_fit_sub_together = zeros(594, 4);
+Y_fit = siroutput_full_SLIRD(x,t);
+Y_fit_sub_together = zeros(594, 5);
 
 figure(1);
 subplot(1, 2, 1);
@@ -122,7 +122,7 @@ title("Modeled Susceptible and Measured Susceptible as a Function of Time");
 
 subplot(1, 2, 2);
 hold on;
-plot(Y_fit(:, 4));
+plot(Y_fit(:, 5));
 plot(covidstlcity_full(:, 2));
 hold off;
 legend('D','Measured Fatality Rate');
@@ -159,7 +159,7 @@ title("Modeled Susceptible and Measured Susceptible as a Function of Time");
 
 subplot(1, 2, 2);
 hold on;
-plot(Y_fit(:, 4));
+plot(Y_fit(:, 5));
 plot(covidstlcity_first(:, 2));
 hold off;
 legend('D','Measured Fatality Rate');
@@ -189,7 +189,7 @@ title("Modeled Susceptible and Measured Susceptible as a Function of Time");
 
 subplot(1, 2, 2);
 hold on;
-plot(Y_fit(:, 4));
+plot(Y_fit(:, 5));
 plot(covidstlcity_second(:, 2));
 hold off;
 legend('D','Measured Fatality Rate');
@@ -219,7 +219,7 @@ title("Modeled Susceptible and Measured Susceptible as a Function of Time");
 
 subplot(1, 2, 2);
 hold on;
-plot(Y_fit(:, 4));
+plot(Y_fit(:, 5));
 plot(covidstlcity_third(:, 2));
 hold off;
 legend('D','Measured Fatality Rate');
@@ -249,7 +249,7 @@ title("Modeled Susceptible and Measured Susceptible as a Function of Time");
 
 subplot(1, 2, 2);
 hold on;
-plot(Y_fit(:, 4));
+plot(Y_fit(:, 5));
 plot(covidstlcity_fourth(:, 2));
 hold off;
 legend('D','Measured Fatality Rate');
@@ -279,7 +279,7 @@ title("Modeled Susceptible and Measured Susceptible as a Function of Time");
 
 subplot(1, 2, 2);
 hold on;
-plot(Y_fit(:, 4));
+plot(Y_fit(:, 5));
 plot(covidstlcity_fifth(:, 2));
 hold off;
 legend('D','Measured Fatality Rate');
@@ -302,7 +302,7 @@ title("Modeled Susceptible and Measured Susceptible as a Function of Time");
 
 subplot(1, 2, 2);
 hold on;
-plot(Y_fit_sub_together(:, 4));
+plot(Y_fit_sub_together(:, 5));
 plot(covidstlcity_full(:, 2));
 hold off;
 legend('D','Measured Fatality Rate');
