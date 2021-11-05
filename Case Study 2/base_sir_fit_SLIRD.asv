@@ -76,10 +76,13 @@ sirafun= @(x)siroutput_SLIRD(x,t,coviddata);
 % Note that this is imposed element-wise
 % If you don't want such a constraint, keep these matrices empty.
 A = [0 0 1 1 0 0 0 0 0 0 0;
-     0 0 0 0 0 0 0 1 0 0 0
-     0 0 0 0 1 1 0 0 0 0 0
-     0 1 0 0 0 0 0 0 0 0 0];
-b = [.1, .75, .1, .005]; 
+     0 0 0 0 0 0 0 1 0 0 0;
+     0 0 0 0 1 1 0 0 0 0 0;
+     0 1 0 0 0 0 0 0 0 0 0;
+     1 0 0 1 1 0 0 0 0 0 0;
+     -1/100 0 0 -1 0 -1 0 0 0 0 0;
+     0 -1 -1 0 0 0 0 0 0 0 0];
+b = [.05, .75, .1, .005, .001, -.05, -.05]; 
 
 %% set up some fixed constraints
 % Set Af and bf to impose a parameter constraint of the form Af*x = bf
