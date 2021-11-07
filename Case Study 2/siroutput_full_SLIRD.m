@@ -24,8 +24,8 @@ ic_fatality = x(11);
 
 % Set up SLIRD within-population transmission matrix
 A = [1 - k_susc_lock - k_infections - k_vaccine k_lock_susc                                    0                             0 0; 
-    k_susc_lock                                 1 - k_lock_susc - k_infections/100 - k_vaccine 0                             0 0;
-    k_infections                                k_infections/100                               1 - k_recover - k_fatality    0 0; 
+    k_susc_lock                                 1 - k_lock_susc - k_infections/10 - k_vaccine 0                             0 0;
+    k_infections                                k_infections/10                               1 - k_recover - k_fatality    0 0; 
     k_vaccine                                   k_vaccine                                      k_recover                     1 0; 
     0                                           0                                              k_fatality                    0 1];
 
