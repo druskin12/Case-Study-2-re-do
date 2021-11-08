@@ -10,8 +10,8 @@ k_infections = x(1);
 k_fatality = x(2);
 k_recover = x(3);
 k_vaccine = x(4);
-k_susc_lock = x(5); % Rate of people going from susceptible to lockdown
-k_lock_susc = x(6); % Rate of people going from lockdown to susceptible
+k_susc_lock = x(5);
+k_lock_susc = x(6);
 
 % set up initial conditions
 ic_susc = x(7);
@@ -21,11 +21,11 @@ ic_rec = x(10);
 ic_fatality = x(11);
 
 % Set up SLIRD within-population transmission matrix
-A = [1 - k_susc_lock - k_infections - k_vaccine              k_lock_susc                                   0                             0 0; 
+A = [1 - k_susc_lock - k_infections - k_vaccine              k_lock_susc                                    0                             0 0; 
     k_susc_lock                                              1 - k_lock_susc - k_infections/10 - k_vaccine 0                             0 0;
     k_infections                                             k_infections/10                               1 - k_recover - k_fatality    0 0; 
-    k_vaccine                                                k_vaccine                                     k_recover                     1 0; 
-    0                                                        0                                             k_fatality                    0 1];
+    k_vaccine                                                k_vaccine                                      k_recover                     1 0; 
+    0                                                        0                                              k_fatality                    0 1];
 
 % The next line creates a zero vector that will be used a few steps.
 B = zeros(5,1);
@@ -42,7 +42,6 @@ y = lsim(sys_sir_base,zeros(t,1),linspace(0,t-1,t),x0);
 % modeled data and the true data. Norms and distances will be useful here.
 % Hint: This is a central part of this case study!  choices here will have
 % a big impact!
-f = norm(y(:, 1) + y(:, 2) + k_vaccine*sum(y(:, 1)) + k_vaccine*sum(y(:, 2)) - data(:, 1)) + norm(y(:, 5) - data(:, 2));
-% 
+f = norm(y(:, 1) + y(:, 2) + k_vaccine*sum(y(:, 1)) + k_vaccine*sum(y(:, 2)) - data(:, 1)) + norm(y(:, 5) - data(:, 2)); % 
 
 end
