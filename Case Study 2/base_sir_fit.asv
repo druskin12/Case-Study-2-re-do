@@ -2,6 +2,7 @@ clear
 close all
 load('COVIDdata.mat')
 
+COVID_STLcity = zeros(594,2);
 COVID_STLcity = COVID_MO([585:1178], [3:4]); % Takes the St. Louis data
 % from the overall dataset.
 STL_population = populations_MO{2, 2};
@@ -102,20 +103,20 @@ hold on;
 plot(Y_fit(:, 1));
 plot(covidstlcity_first(:, 1));
 hold off;
-legend('S','Measured S');
+legend('S','Measured Susceptible');
 xlabel('Time');
 ylabel('Population Fraction');
-title("S, 1-120");
+title("Modeled vs Measured Susceptible, 1-120");
 
 subplot(1, 10, 2);
 hold on;
 plot(Y_fit(:, 4));
 plot(covidstlcity_first(:, 2));
 hold off;
-legend('D','Measured D');
+legend('D','Measured Fatality Rate');
 xlabel('Time');
 ylabel('Population Fraction');
-title("D, 1-120");
+title("Modeled vs Measured Fatalities, 1-120");
 
 covidstlcity_second = covidstlcity_full(121:240, :);
 coviddata = covidstlcity_second;
@@ -127,26 +128,26 @@ x0 = x; % This continues the model from where it was left off in the last
 x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
 Y_fit = siroutput_full(x,t);
 Y_fit_sub_together([121:240], :) = Y_fit(:, :);
-
+figure(3);
 subplot(1, 10, 3);
 hold on;
 plot(Y_fit(:, 1));
 plot(covidstlcity_second(:, 1));
 hold off;
-legend('S','Measured S');
+legend('S','Measured Susceptible');
 xlabel('Time');
 ylabel('Population Fraction');
-title("S, 121-240");
+title("Modeled and Measured Susceptible, 121-240");
 
 subplot(1, 10, 4);
 hold on;
 plot(Y_fit(:, 4));
 plot(covidstlcity_second(:, 2));
 hold off;
-legend('D','Measured D');
+legend('D','Measured Fatality Rate');
 xlabel('Time');
 ylabel('Population Fraction');
-title("D, 121-240");
+title("Modeled and Measured Fatalities, 121-240");
 
 covidstlcity_third = covidstlcity_full(241:330, :);
 coviddata = covidstlcity_third; 
@@ -157,26 +158,26 @@ x0 = x;
 x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
 Y_fit = siroutput_full(x,t);
 Y_fit_sub_together([241:330], :) = Y_fit(:, :);
-
+figure(4);
 subplot(1, 10, 5);
 hold on;
 plot(Y_fit(:, 1));
 plot(covidstlcity_third(:, 1));
 hold off;
-legend('S','Measured S');
+legend('S','Measured Susceptible');
 xlabel('Time');
 ylabel('Population Fraction');
-title("S, 241-330");
+title("Modeled and Measuered Susceptible, 241-330");
 
 subplot(1, 10, 6);
 hold on;
 plot(Y_fit(:, 4));
 plot(covidstlcity_third(:, 2));
 hold off;
-legend('D','Measured D');
+legend('D','Measured Fatality Rate');
 xlabel('Time');
 ylabel('Population Fraction');
-title("D, 241-330");
+title("Modeled and Measured Fatalities, 241-330");
 
 covidstlcity_fourth = covidstlcity_full(331:500, :);
 coviddata = covidstlcity_fourth; 
@@ -187,26 +188,26 @@ x0 = x;
 x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
 Y_fit = siroutput_full(x,t);
 Y_fit_sub_together([331:500], :) = Y_fit(:, :);
-
+figure(5);
 subplot(1, 10, 7);
 hold on;
 plot(Y_fit(:, 1));
 plot(covidstlcity_fourth(:, 1));
 hold off;
-legend('S','Measured S');
+legend('S','Measured Susceptible');
 xlabel('Time');
 ylabel('Population Fraction');
-title("S, 331-500");
+title("Modeled and Measured Susceptible, 331-500");
 
 subplot(1, 10, 8);
 hold on;
 plot(Y_fit(:, 4));
 plot(covidstlcity_fourth(:, 2));
 hold off;
-legend('D','Measured D');
+legend('D','Measured Fatality Rate');
 xlabel('Time');
 ylabel('Population Fraction');
-title("D, 331-500");
+title("Modeled and Measured Fatalities, 331-500");
 
 covidstlcity_fifth = covidstlcity_full(501:594, :);
 coviddata = covidstlcity_fifth; % TO SPECIFY
@@ -217,26 +218,26 @@ x0 = x;
 x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
 Y_fit = siroutput_full(x,t);
 Y_fit_sub_together([501:594], :) = Y_fit(:, :);
-
+figure(6);
 subplot(1, 10, 9);
 hold on;
 plot(Y_fit(:, 1));
 plot(covidstlcity_fifth(:, 1));
 hold off;
-legend('S','Measured S');
+legend('S','Measured Susceptible');
 xlabel('Time');
 ylabel('Population Fraction');
-title("S, 501-594");
+title("Modeled and Measured Susceptible, 501-594");
 
 subplot(1, 10, 10);
 hold on;
 plot(Y_fit(:, 4));
 plot(covidstlcity_fifth(:, 2));
 hold off;
-legend('D','Measured D');
+legend('D','Measured Fatality Rate');
 xlabel('Time');
 ylabel('Population Fraction');
-title("D, 501-594");
+title("Modeled and Measured Fatalities, 501-594");
 
 figure();
 subplot(1, 2, 1);
@@ -258,4 +259,4 @@ hold off;
 legend('D','Measured Fatality Rate');
 xlabel('Time');
 ylabel('Population Fraction');
-title("Modeled and  Measured Fatalities, All Models");
+title("Modeled Fatality Rate and Measured Fatality Rate as a Function of Time");

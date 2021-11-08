@@ -9,9 +9,9 @@ function f = siroutput_SLIRD(x,t,data)
 k_infections = x(1);
 k_fatality = x(2);
 k_recover = x(3);
-k_vaccine = x(4);
-k_susc_lock = x(5); % Rate of people going from susceptible to lockdown
-k_lock_susc = x(6); % Rate of people going from lockdown to susceptible
+k_vaccine = x(4); % Vaccination rate for both susceptible and lockdown.
+k_susc_lock = x(5); % Rate of people going from susceptible to lockdown.
+k_lock_susc = x(6); % Rate of people going from lockdown to susceptible.
 
 % set up initial conditions
 ic_susc = x(7);
@@ -43,6 +43,8 @@ y = lsim(sys_sir_base,zeros(t,1),linspace(0,t-1,t),x0);
 % Hint: This is a central part of this case study!  choices here will have
 % a big impact!
 f = norm(y(:, 1) + y(:, 2) + k_vaccine*sum(y(:, 1)) + k_vaccine*sum(y(:, 2)) - data(:, 1)) + norm(y(:, 5) - data(:, 2));
-% 
+% Cost is norm(modeled susceptible + lockdown + vaccinated susceptible + vaccinated
+% lockdown - actual non-case rate) + norm(modeled death rate - actual death
+% rate).
 
 end

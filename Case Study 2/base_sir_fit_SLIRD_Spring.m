@@ -151,7 +151,7 @@ A = [0 0 0 0 1 1 0 0 0 0 0;
      0 0 0 -1 0 0 0 0 0 0 0;
      0 0 0 0 0 0 0 1 0 0 0;
      -1 0 0 0 0 0 0 0 0 0 0];
-b = [.05, .1, .01, -.0012, .75, -.00005];
+b = [.05, .1, .01, -.0011, .75, -.00005];
 
 x0 = x;
 
@@ -185,17 +185,25 @@ xlabel('Time');
 ylabel('Population Fraction');
 title("Modeled Lockdown Rate as a Function of Time");
 
-%%
-figure(3);
+figure();
+
+subplot(1, 3, 1);
+hold on;
+plot(Y_fit_sub_together(:, 5));
+plot(covidspringfieldcity_full(:, 2));
+legend('D', 'Measured D');
+xlabel('Time');
+ylabel('Population Fraction');
+title('Modeled vs Measured D, Springfield');
 
 subplot(1, 3, 2);
 plot(Y_fit_sub_together(:, 4));
 xlabel('Time');
 ylabel('Population Fraction');
-title("Modeled Recovery Rate");
+title("Modeled Recovery Rate, Springfield");
 
 subplot(1, 3, 3);
 plot(Y_fit_sub_together(:, 2));
 xlabel('Time');
 ylabel('Population Fraction');
-title("Modeled Lockdown Rate");
+title("Modeled Lockdown Rate, Springfield");

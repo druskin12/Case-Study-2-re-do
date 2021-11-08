@@ -11,9 +11,9 @@ function f = siroutput_full_SLIRD(x,t)
 k_infections = x(1);
 k_fatality = x(2);
 k_recover = x(3);
-k_vaccine = x(4);
-k_susc_lock = x(5);
-k_lock_susc = x(6);
+k_vaccine = x(4); % Vaccination rate for both susceptible and lockdown.
+k_susc_lock = x(5); % Rate of people going from susceptible to lockdown.
+k_lock_susc = x(6); % Rate of people going from lockdown to susceptible.
 
 % set up initial conditions
 ic_susc = x(7);

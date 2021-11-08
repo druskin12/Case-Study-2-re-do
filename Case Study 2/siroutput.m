@@ -35,6 +35,8 @@ y = lsim(sys_sir_base,zeros(t,1),linspace(0,t-1,t),x0);
 % modeled data and the true data. Norms and distances will be useful here.
 % Hint: This is a central part of this case study!  choices here will have
 % a big impact!
-f = norm(y(:, 1) - data(:, 1)) + norm(y(:, 4) - data(:, 2)); % can be one line - do based on infections and deaths
+f = norm(y(:, 1) - data(:, 1)) + norm(y(:, 4) - data(:, 2));
+% data(:, 1) is 1 - cases, which is also the susceptible rate.
+% f is norm(Modeled S - Measured S) + norm(Modeled D - Measured D).
 
 end

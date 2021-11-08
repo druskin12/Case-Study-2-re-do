@@ -1,66 +1,26 @@
+% This same method was applied to the Jefferson City and Springfield data
+% in separate files.
+
 clear
 close all
 load('COVIDdata.mat')
-% Here is an example that reads in infection and fatalities from STL City
-% and loads them into a new matrix covidstlcity_full
-% In addition to this, you have other matrices for the other two regions in question
 
-COVID_STLcity = zeros(594,2);
-COVID_STLcity = COVID_MO([585:1178], [3:4]);
+COVID_STLcity = COVID_MO([585:1178], [3:4]); % Takes the St. Louis data
+% from the overall dataset.
 STL_population = populations_MO{2, 2};
 
 covidstlcity_full = double(table2array(COVID_STLcity(:,[1:2])))./STL_population;
+% Creates the rates per St. Louis population.
 for i = 1:594
-    covidstlcity_full(i, 1) = 1 - covidstlcity_full(i, 1);
+    covidstlcity_full(i, 1) = 1 - covidstlcity_full(i, 1); % Changes the
+    % case rate in the actual dataset to the non-case rate, which allows
+    % for use in the cost function (as specified in the report).
 end
 
-% Stores day-to-day changes of cases and deaths in STLcity region in
-% columns 1 and 2, respectively, of COVID_STLcity_dayChanges.
-COVID_STLcity_dayChanges = zeros(594, 2);
+coviddata = covidstlcity_full; % We're only analyzing the St. Louis data.
+t = 594; % There's 594 available days in the St. Louis data. We first will 
+% find a model for all days.
 
-for i = 2:594
-    COVID_STLcity_dayChanges(i, 1) = (COVID_STLcity{i, 1} - COVID_STLcity{i-1, 1}) / STL_population;
-    COVID_STLcity_dayChanges(i, 2) = (COVID_STLcity{i, 2} - COVID_STLcity{i-1, 2}) / STL_population;
-end
-
-
-
-COVID_JEFFERSONcity = zeros(584,2);
-COVID_JEFFERSONcity = COVID_MO([1:584], [3:4]);
-JEFFERSON_population = populations_MO{1, 2};
-
-covidjeffersoncity_full = double(table2array(COVID_JEFFERSONcity(:,[1:2])))./JEFFERSON_population;
-
-% Stores day-to-day changes of cases and deaths in JEFFERSONcity region in
-% columns 1 and 2, respectively, of COVID_JEFFERSONcity_dayChanges.
-COVID_JEFFERSONcity_dayChanges = zeros(584, 2);
-
-for i = 2:584
-    COVID_JEFFERSONcity_dayChanges(i, 1) = (COVID_JEFFERSONcity{i, 1} - COVID_JEFFERSONcity{i-1, 1}) / JEFFERSON_population;
-    COVID_JEFFERSONcity_dayChanges(i, 2) = (COVID_JEFFERSONcity{i, 2} - COVID_JEFFERSONcity{i-1, 2}) / JEFFERSON_population;
-end
-
-
-COVID_SPRINGFIELDcity = zeros(589,2);
-COVID_SPRINGFIELDcity = COVID_MO([1179:1767], [3:4]);
-SPRINGFIELD_population = populations_MO{3, 2};
-
-covidspringfieldcity_full = double(table2array(COVID_SPRINGFIELDcity(:,[1:2])))./SPRINGFIELD_population;
-
-
-% Stores day-to-day changes of cases and deaths in SPRINGFIELDcity region in
-% columns 1 and 2, respectively, of COVID_SPRINGFIELDcity_dayChanges.
-COVID_SPRINGFIELDcity_dayChanges = zeros(589, 2);
-
-for i = 2:589
-    COVID_SPRINGFIELDcity_dayChanges(i, 1) = (COVID_SPRINGFIELDcity{i, 1} - COVID_SPRINGFIELDcity{i-1, 1}) / SPRINGFIELD_population;
-    COVID_SPRINGFIELDcity_dayChanges(i, 2) = (COVID_SPRINGFIELDcity{i, 2} - COVID_SPRINGFIELDcity{i-1, 2}) / SPRINGFIELD_population;
-end
-
-
-
-coviddata = covidstlcity_full; % TO SPECIFY
-t = 594; % TO SPECIFY
 
 % The following line creates an 'anonymous' function that will return the cost (i.e., the model fitting error) given a set
 % of parameters.  There are some technical reasons for setting this up in this way.
@@ -81,8 +41,14 @@ A = [0 0 0 0 1 1 0 0 0 0 0;
      0 0 0 1 0 0 0 0 0 0 0;
      0 0 0 0 0 0 0 1 0 0 0;
      -1 0 0 0 0 0 0 0 0 0 0];
-b = [.05, .1, .01, 0.0001, .75, -.00005];
-
+b = [.05, .1, .01, 0.000001, .75, -.00005];
+% Sum of the rates of those going between S and L is < 0.05.
+% Recovery rate is < 0.1.
+% Fatality rate is < 0.01.
+% Vaccination rate is essentially zero.
+% Lockdown rate is < 0.75.
+% Infection rate is > 0.00005 (it was close to 0 before we adjusted for
+% this).
 %% set up some fixed constraints
 % Set Af and bf to impose a parameter constraint of the form Af*x = bf
 % Hint: For example, the sum of the initial conditions should be
@@ -90,7 +56,7 @@ b = [.05, .1, .01, 0.0001, .75, -.00005];
 % If you don't want such a constraint, keep these matrices empty.
 Af = [0 0 0 0 0 0 1 1 1 1 1];
 bf = 1;
-
+% S, L, I, R, and D must sum to 1.
 %% set up upper and lower bound constraints
 % Set upper and lower bounds on the parameters
 % lb < x < ub
@@ -98,18 +64,17 @@ bf = 1;
 % If you don't want such a constraint, keep these matrices empty.
 ub = [1 1 1 1 1 1 1 1 1 1 1]';
 lb = [0 0 0 0 0 0 0 0 0 0 0]';
+% Rates must be between 0 and 1.
 %%
 % Specify some initial parameters for the optimizer to start from
 x0 = [.005; .005; .075; 0; 0; 0.01; 1 - 0.75 - 1/STL_population; 0.75; 1/STL_population; 0; 0]; 
+% Initial lockdown rate is 0.75.
 
 % This is the key line that tries to opimize your model parameters in order to
 % fit the data
 % note tath you 
 x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
 
-%plot(Y);
-%legend('S',L','I','R','D');
-%xlabel('Time')
 %%
 Y_fit = siroutput_full_SLIRD(x,t);
 Y_fit_sub_together = zeros(594, 5);
@@ -120,10 +85,10 @@ hold on;
 plot(Y_fit(:, 1) + Y_fit(:, 2) + x(4)*sum(Y_fit(:, 1)) + x(4)*sum(Y_fit(:, 2)));
 plot(covidstlcity_full(:, 1));
 hold off;
-legend('S','Measured Susceptible');
+legend('Modeled Non Cases','Measured Non Cases');
 xlabel('Time');
 ylabel('Population Fraction');
-title("Modeled Susceptible and Measured Susceptible as a Function of Time");
+title("Modeled and Measured Non Cases");
 
 subplot(1, 3, 2);
 hold on;
@@ -133,60 +98,30 @@ hold off;
 legend('D','Measured Fatality Rate');
 xlabel('Time');
 ylabel('Population Fraction');
-title("Modeled Fatality Rate and Measured Fatality Rate as a Function of Time");
+title("Modeled and Measured Fatality Rate");
 
 subplot(1, 3, 3);
 plot(Y_fit(:, 2));
 xlabel('Time');
 ylabel('Population Fraction');
-title("Modeled Lockdown Rate as a Function of Time");
-%%
-% Make some plots that illustrate your findings.
-% TO ADD
+title("Modeled Lockdown Rate");
 
 covidstlcity_first = covidstlcity_full(1:240, :);
-coviddata = covidstlcity_first; % TO SPECIFY
-t = 240; % TO SPECIFY
+coviddata = covidstlcity_first; 
+t = 240; % First 240 days are without the vaccine.
 sirafun= @(x)siroutput_SLIRD(x,t,coviddata);
 
 x0 = [.005; .005; .075; 0; 0; 0.01; 1 - 0.75 - 1/STL_population; 0.75; 1/STL_population; 0; 0];
 
 x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
-Y_fit = siroutput_full_SLIRD(x,t);
+Y_fit = siroutput_full_SLIRD(x,t); % This will be used to display the results
+% of both models in one plot.
 
 Y_fit_sub_together([1:240], :) = Y_fit(:, :);
 
-figure(2);
-subplot(1, 3, 1);
-hold on;
-plot(Y_fit(:, 1) + Y_fit(:, 2) + x(4)*sum(Y_fit(:, 1)) + x(4)*sum(Y_fit(:, 2)));
-plot(covidstlcity_first(:, 1));
-hold off;
-legend('S','Measured Susceptible');
-xlabel('Time');
-ylabel('Population Fraction');
-title("Modeled Susceptible and Measured Susceptible as a Function of Time");
-
-subplot(1, 3, 2);
-hold on;
-plot(Y_fit(:, 5));
-plot(covidstlcity_first(:, 2));
-hold off;
-legend('D','Measured Fatality Rate');
-xlabel('Time');
-ylabel('Population Fraction');
-title("Modeled Fatality Rate and Measured Fatality Rate as a Function of Time");
-
-subplot(1, 3, 3);
-plot(Y_fit(:, 2));
-xlabel('Time');
-ylabel('Population Fraction');
-title("Modeled Lockdown Rate as a Function of Time");
-
-%%
-covidstlcity_third = covidstlcity_full(241:594, :);
-coviddata = covidstlcity_third; % TO SPECIFY
-t = 354; % TO SPECIFY
+covidstlcity_second = covidstlcity_full(241:594, :);
+coviddata = covidstlcity_second; 
+t = 354; 
 sirafun= @(x)siroutput_SLIRD(x,t,coviddata);
 
 A = [0 0 0 0 1 1 0 0 0 0 0;
@@ -195,51 +130,33 @@ A = [0 0 0 0 1 1 0 0 0 0 0;
      0 0 0 -1 0 0 0 0 0 0 0;
      0 0 0 0 0 0 0 1 0 0 0;
      -1 0 0 0 0 0 0 0 0 0 0];
-b = [.05, .1, .01, -.0012, .75, -.00005];
-
+b = [.05, .1, .01, -.0011, .75, -.00005];
+% Vaccination rate of .0011 per day is applied to the post-day-240 data.
 x0 = x;
 
 x = fmincon(sirafun,x0,A,b,Af,bf,lb,ub)
 Y_fit = siroutput_full_SLIRD(x,t);
 Y_fit_sub_together([241:594], :) = Y_fit(:, :);
-figure(4);
+
+figure();
+
 subplot(1, 3, 1);
 hold on;
-plot(Y_fit(:, 1) + Y_fit(:, 2)+ x(4)*sum(Y_fit(:, 1)) + x(4)*sum(Y_fit(:, 2)));
-plot(covidstlcity_third(:, 1));
-hold off;
-legend('S','Measured Susceptible');
+plot(Y_fit_sub_together(:, 5));
+plot(covidstlcity_full(:, 2));
+legend('D', 'Measured D');
 xlabel('Time');
 ylabel('Population Fraction');
-title("Modeled Susceptible and Measured Susceptible as a Function of Time");
-
-subplot(1, 3, 2);
-hold on;
-plot(Y_fit(:, 5));
-plot(covidstlcity_third(:, 2));
-hold off;
-legend('D','Measured Fatality Rate');
-xlabel('Time');
-ylabel('Population Fraction');
-title("Modeled Fatality Rate and Measured Fatality Rate as a Function of Time");
-
-subplot(1, 3, 3);
-plot(Y_fit(:, 2));
-xlabel('Time');
-ylabel('Population Fraction');
-title("Modeled Lockdown Rate as a Function of Time");
-
-%%
-figure(3);
+title('Modeled vs Measured D, STL');
 
 subplot(1, 3, 2);
 plot(Y_fit_sub_together(:, 4));
 xlabel('Time');
 ylabel('Population Fraction');
-title("Modeled Recovery Rate");
+title("Modeled Recovery Rate, STL");
 
 subplot(1, 3, 3);
 plot(Y_fit_sub_together(:, 2));
 xlabel('Time');
 ylabel('Population Fraction');
-title("Modeled Lockdown Rate");
+title("Modeled Lockdown Rate, STL");

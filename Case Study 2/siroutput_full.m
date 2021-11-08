@@ -20,9 +20,9 @@ ic_fatality = x(7);
 
 % Set up SIRD within-population transmission matrix
 A = [1 - k_infections 0                               0 0; 
-    k_infections      1 - k_recover - k_fatality 0 0; 
-    0                 k_recover                                                 1 0; 
-    0                 k_fatality                                                0 1];
+    k_infections      1 - k_recover - k_fatality      0 0; 
+    0                 k_recover                       1 0; 
+    0                 k_fatality                      0 1];
 
 % The next line creates a zero vector that will be used a few steps.
 B = zeros(4,1);

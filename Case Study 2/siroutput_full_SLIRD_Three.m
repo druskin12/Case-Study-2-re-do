@@ -29,32 +29,32 @@ k_vaccine_Spring = x(26);
 k_susc_lock_Spring = x(27);
 k_lock_susc_Spring = x(28);
 
-k_susc_STL_Jeff = x(34);
+k_susc_STL_Jeff = x(34); % Rate of susceptible transport from STL to Jeff.
 k_lock_STL_Jeff = x(35);
 k_inf_STL_Jeff = x(36);
 k_rec_STL_Jeff = x(37);
 
-k_susc_Jeff_STL = x(38);
+k_susc_Jeff_STL = x(38); % Rate of susceptible transport from Jeff to STL.
 k_lock_Jeff_STL = x(39);
 k_inf_Jeff_STL = x(40);
 k_rec_Jeff_STL = x(41);
 
-k_susc_STL_Spring = x(42);
+k_susc_STL_Spring = x(42); % Rate of susceptible transport from STL to Springfield.
 k_lock_STL_Spring = x(43);
 k_inf_STL_Spring = x(44);
 k_rec_STL_Spring = x(45);
 
-k_susc_Spring_STL = x(46);
+k_susc_Spring_STL = x(46); % Rate of susceptible transport from Springfield to STL.
 k_lock_Spring_STL = x(47);
 k_inf_Spring_STL = x(48);
 k_rec_Spring_STL = x(49);
 
-k_susc_Jeff_Spring = x(50);
+k_susc_Jeff_Spring = x(50); % Rate of susceptible transport from Jeff to Springfield.
 k_lock_Jeff_Spring = x(51);
 k_inf_Jeff_Spring = x(52);
 k_rec_Jeff_Spring = x(53);
 
-k_susc_Spring_Jeff = x(54);
+k_susc_Spring_Jeff = x(54); % Rate of susceptible transport from Springfield to Jeff.
 k_lock_Spring_Jeff = x(55);
 k_inf_Spring_Jeff = x(56);
 k_rec_Spring_Jeff = x(57);

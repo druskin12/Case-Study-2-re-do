@@ -1,43 +1,55 @@
 function [policy_matrix] = sirpolicy(current_policy, slird_vals)
 
-% this function returns a new policy (for the next time step) based on the current policy and current SLIRD values
-% slird_vals: a 5 dimensional vector containing the current proportion of individuals in susceptible, lockdown, infected, recovered and deceased
-% current_polc: a 5x5 matrix containing the current SLIRD policy (i.e., the state transition matrix)
+STL_population = 2805473;   % Given in COVID_MO
+plausible_vaccinate_per_day = 30000 % Taken from average of first few months of vaccination rate in STL city. 
+plausible_vaccinate_per_day_fraction = plausible_vaccinate_per_day/STL_population; % Conversion of above to fraction.
+threshold = plausible_vaccinate_per_day_fraction / 2; % In case neither of 
+% first two conditions below are met, will be able to vaccinate all 
+% remaining individuals in S and L categories since able to vaccinate 
+% 30,000 individuals/day.
 
-if slird_vals(4) <= 0.8
-    
+% From 1/13 to 4/27, STL city averaged about 37000 doses given/day, or
+% 22000 fully vaccinated per day. Use value between these for moving people
+% to recovered (via vaccination). Want to prioritize susceptible, then move
+% on to vaccinating lockdown citizens once no more susceptible citizens.
 
+% According to mayoclinic, herd immunity for Covid will occur when 
+% approximately 70% of the population is immune. Thus, will want to keep 
+% moving people to Recovered (via vaccinations) until reaches this value. 
+% If herd immunity value met, maintain status quo.
+if slird_vals(4) < 0.7
+    % If at least about 15000 people are still in susceptible category, 
+    % want to prioritize moving them to recovered over lockdown citizens.
+    if slird_vals(1) >= threshold   
+        current_policy(1, 4) = plausible_vaccinate_per_day/slird_vals(1); % makes S-->R values such that 30000 susceptible citizens get vaccinated this day.
+    % If below threshold for remaining individuals in susceptible, check if
+    % above same threshold of 15000 people in lockdown.
+    elseif slird_vals(2) >= threshold
+        current_policy(2, 4) = plausible_vaccinate_per_day/slird_vals(2); % makes L-->R values such that 30000 lockdown citizens get vaccinated this day.       
+    % If below threshold for both of these values, vaccinate all remaining
+    % un-vaccinated and un-infected individuals (since able to vaccinate
+    % 30,000 per day).
+    else
+        current_policy(1, 4) = 1;
+        current_policy(2, 4) = 1;
+    end
+% If herd immunity met, allow all lockdown individuals to leave lockdown,
+% thus joining susceptible category. 
+else
+    current_policy(1, 2) = 1;
+    current_policy(2, 2) = 0;
+    current_policy(3, 2) = 0;
+    current_policy(4, 2) = 0;
+end
 
-
-policy_matrix = [1 - k_susc_lock - k_infections - k_vaccine  k_lock_susc                                    0                             0 0; 
-                 k_susc_lock                                 1 - k_lock_susc - k_infections/10 - k_vaccine  0                             0 0;
-                 k_infections                                k_infections/10                                1 - k_recover - k_fatality    0 0; 
-                 k_vaccine                                   k_vaccine                                      k_recover                     1 0; 
-                 0                                           0                                              k_fatality                    0 1];
+% Sets policy matrix using values from conditions checked above and keeping
+% all other values the same. Makes sure that all columns still add up to 1.
+policy_matrix = [1-current_policy(2,1)-current_policy(3,1)-current_policy(4,1)  current_policy(1,2)                                             0                                           0   0;
+                 current_policy(2,1)                                            1-current_policy(1,2)-current_policy(3,2)-current_policy(4,2)   0                                           0   0;
+                 current_policy(3,1)                                            current_policy(3,2)                                             1-current_policy(4,3)-current_policy(5,3)   0   0;
+                 current_policy(4,1)                                            current_policy(4,2)                                             current_policy(4,3)                         1   0;
+                 0                                                              0                                                               current_policy(5,3)                         0   1];
 
 end
 
-ideas: 
-- if recovered rate is less than some constant (probably in the range of 0.6-0.8), use some combination of 
-    more lockdown and more vaccinations. Or, could keep lockdown high until recovered gets to this value. 
-    The reason for this is that herd immunity is likely achieved somewhere in this range. Downside: lots of
-    lost productivity during this time.
-- model of TED talk idea where everyone works/goes to school for 4 days, stays home for 10, repeat. People may become
-infected during these days of work but will likely recover by end of 10 day period. Downside: large wobble
 
-Could combine these strategies. Will (most likely) largely lower covid rates but have lots of costs and wobble.
-
-
-%% Part 5 --> didn't realize we had sirpolicy, so below doesn't really apply. 
-intervention_model_together = zeros(594, 5);
-
-change_L_norm = norm(Y_fit_sub_together(:, 2) - intervention_model_together(:, 2));
-change_I_norm = norm(Y_fit_sub_together(:, 3) - intervention_model_together(:, 3));
-change_D_norm = norm(Y_fit_sub_together(:, 5) - intervention_model_together(:, 5));
-mean_rel_change_I = mean(Y_fit_sub_together(:, 3)) / mean(intervention_model_together(:, 3));
-mean_rel_change_D = mean(Y_fit_sub_together(:, 5)) / mean(intervention_model_together(:, 5));
-
-Jbenefit = 10*change_I_norm + 10*change_D_norm;  % want large
-Jcosts = 100*(change_L_norm)^2 + 800*(1-lambda)*(change_I_norm)^2 + 800*(1-mean_rel_change_D)*(change_D_norm)^2; % want small
-
-Jrelative = Jbenefit - alpha*Jcosts - Wobble;
